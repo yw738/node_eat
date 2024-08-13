@@ -22,7 +22,9 @@ class App {
     });
   }
 
-  //
+  /**
+   * 查 视频列表
+   */
   getList(req, res) {
     let {
       pageSize = 20,
@@ -32,7 +34,7 @@ class App {
       keyword = "",
       foodType = "",
     } = req.query;
-    let json = { upId:'' };//...req.query
+    let json = { up_id: upId, cityName: city }; //...req.query
     delete json.pageSize;
     delete json.pageIndex;
     let pageStart = (pageIndex - 1) * pageSize; // 起始条
@@ -50,8 +52,27 @@ class App {
 
     let sql = `select * from video_list ${str} order by videoTime desc limit ${pageStart},${pageSize}`;
     db.dbquery(sql).then((result) => {
-      res.send({ code: 0, data: result, message: "新增成功" });
+      res.send({ code: 0, data: result, message: "ok" });
     });
+  }
+
+  /**
+   * 查 视频详情 包含具体店铺 + 店铺坐标
+   */
+  getDetail(req, res) {
+    // video id
+    let { id = "" } = req.query;
+    let sql2 = `select * from video_list where id='${id}'`;
+    db.dbquery(sql2).then((result2) => {
+      // res.send({ code: 0, data: result, message: "ok" });
+      db.dbquery(sql).then((result) => {
+        let json = result2[0];
+        json.shopList = result;
+        res.send({ code: 0, data: json, message: "ok" });
+      });
+    });
+    // 视频 关联的地址
+    let sql = `select * from (select * from shop_contact a WHERE a.videoId='${id}') a inner join shop_list b on a.addressId = b.id ;`;
   }
 
   // 更新用户信息
