@@ -59,20 +59,18 @@ class App {
   /**
    * 查 视频详情 包含具体店铺 + 店铺坐标
    */
-  getDetail(req, res) {
+  async getDetail(req, res) {
     // video id
     let { id = "" } = req.query;
-    let sql2 = `select * from video_list where id='${id}'`;
-    db.dbquery(sql2).then((result2) => {
-      // res.send({ code: 0, data: result, message: "ok" });
-      db.dbquery(sql).then((result) => {
-        let json = result2[0];
-        json.shopList = result;
-        res.send({ code: 0, data: json, message: "ok" });
-      });
-    });
-    // 视频 关联的地址
     let sql = `select * from (select * from shop_contact a WHERE a.videoId='${id}') a inner join shop_list b on a.addressId = b.id ;`;
+    let sql2 = `select * from video_list where id='${id}'`; // 查视频
+    let addressDto = await db.dbquery(sql).then((result) => result); // 视频 关联的地址
+    let videoDto = await db.dbquery(sql2).then((result) => result[0]);
+    let sql3 = `select * from up_list a where a.up_id='${videoDto.up_id}'`; // 查up
+    let upDto = await db.dbquery(sql3).then((result) => result[0]);
+    videoDto.shopList = addressDto;
+    videoDto.upDto = upDto;
+    res.send({ code: 0, data: videoDto, message: "ok" });
   }
 
   // 更新用户信息
