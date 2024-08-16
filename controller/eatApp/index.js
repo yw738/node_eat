@@ -50,7 +50,34 @@ class App {
     }
     if (str) str = `where ${str}`;
 
-    let sql = `select * from video_list ${str} order by videoTime desc limit ${pageStart},${pageSize}`;
+    let sql0 = `select * from video_list ${str} order by videoTime desc limit ${pageStart},${pageSize}`;
+    let sql = `SELECT
+                  e.*,
+                  f.avgPrice,
+                  f.latitude,
+                  f.longitude 
+                FROM
+                  (
+                  SELECT
+                    * 
+                  FROM
+                    (
+                    SELECT
+                      b.up_name,
+                      a.id,
+                      a.NAME,
+                      a.videoTime,
+                      a.videoTitle,
+                      a.videoImg,
+                      a.cityName 
+                    FROM
+                      ( ${sql0} ) a
+                      INNER JOIN up_list b ON a.up_id = b.up_id 
+                    ) c
+                    INNER JOIN shop_contact d ON c.id = d.videoId 
+                  ) e
+                  INNER JOIN shop_list f ON e.addressId = f.id group by e.id`;
+
     db.dbquery(sql).then((result) => {
       res.send({ code: 0, data: result, message: "ok" });
     });
