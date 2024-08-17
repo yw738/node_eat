@@ -65,7 +65,7 @@ class App {
                     SELECT
                       b.up_name,
                       a.id,
-                      a.NAME,
+                      a.name,
                       a.videoTime,
                       a.videoTitle,
                       a.videoImg,
@@ -89,6 +89,10 @@ class App {
   async getDetail(req, res) {
     // video id
     let { id = "" } = req.query;
+    if (!id) {
+      res.send({ code: 1, data: {}, message: "无id" });
+      return;
+    }
     let sql = `select * from (select * from shop_contact a WHERE a.videoId='${id}') a inner join shop_list b on a.addressId = b.id ;`;
     let sql2 = `select * from video_list where id='${id}'`; // 查视频
     let addressDto = await db.dbquery(sql).then((result) => result); // 视频 关联的地址
