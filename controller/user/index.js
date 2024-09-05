@@ -74,11 +74,13 @@ class User {
 
   // 新增收藏
   addCollection(req, res) {
-    let { userId, itemId } = req.query;
+    let { videoId, userId, num, shopId } = req.query;
     let id = snid.generate();
     db.add("my_collection", {
-      video_id: itemId,
-      user_id: userId,
+      videoId: videoId,
+      userId: userId,
+      shopId: shopId,
+      num: num,
       id: id,
     }).then((result) => {
       res.send({ code: 0, data: { id: id }, message: "新增成功" });
@@ -98,15 +100,20 @@ class User {
   // 获取当前用户的收藏
   getAllCollection(req, res) {
     let { userId } = req.query;
-    db.querySql("my_collection", {
-      user_id: userId,
-    }).then((result) => {
-      let arr = result.map((v) => ({
-        id: v.id,
-        video_id: v.video_id,
-      }));
-      res.send({ code: 0, data: arr, message: "成功" });
+    let sql = `SELECT d.*,e.address,e.avgPrice,e.name AS addName FROM (SELECT c.*,b.name,b.cityName,b.videoTime FROM (SELECT * FROM my_collection a WHERE a.userId = '${userId}')
+    c INNER JOIN video_list b ON c.videoId = b.id) d INNER JOIN shop_list e ON d.shopId = e.id`;
+    db.dbquery(sql).then((result) => {
+      res.send({ code: 0, data: result, message: "ok" });
     });
+    // db.querySql("my_collection", {
+    //   userId: userId,
+    // }).then((result) => {
+    //   let arr = result.map((v) => ({
+    //     id: v.id,
+    //     video_id: v.video_id,
+    //   }));
+    //   res.send({ code: 0, data: arr, message: "成功" });
+    // });
   }
 }
 
