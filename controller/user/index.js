@@ -100,20 +100,22 @@ class User {
   // 获取当前用户的收藏
   getAllCollection(req, res) {
     let { userId } = req.query;
-    let sql = `SELECT d.*,e.address,e.avgPrice,e.name AS addName FROM (SELECT c.*,b.name,b.cityName,b.videoTime FROM (SELECT * FROM my_collection a WHERE a.userId = '${userId}')
+    let sql = `SELECT d.*,e.address,e.avgPrice,e.name AS addName FROM (SELECT c.*,b.name,b.cityName,b.videoTime,b.videoImg FROM (SELECT * FROM my_collection a WHERE a.userId = '${userId}')
     c INNER JOIN video_list b ON c.videoId = b.id) d INNER JOIN shop_list e ON d.shopId = e.id`;
     db.dbquery(sql).then((result) => {
       res.send({ code: 0, data: result, message: "ok" });
     });
-    // db.querySql("my_collection", {
-    //   userId: userId,
-    // }).then((result) => {
-    //   let arr = result.map((v) => ({
-    //     id: v.id,
-    //     video_id: v.video_id,
-    //   }));
-    //   res.send({ code: 0, data: arr, message: "成功" });
-    // });
+  }
+
+  // 判断 店铺是否被用户收藏
+  shopIsCollection(req, res) {
+    let { userId, videoId } = req.query;
+    let sql = `select id,shopId from my_collection where userId = '${userId}' and videoId = '${videoId}'`;
+    db.dbquery(sql).then((result) => {
+      let json = {};
+      result.forEach((v) => (json[v.shopId] = v.id));
+      res.send({ code: 0, data: json, message: "ok" });
+    });
   }
 }
 
