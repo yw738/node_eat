@@ -5,7 +5,7 @@ let app = {
     port: '3306',
     user: "root",
     password: "root",
-    database: "db_test",
+    database: "test",
 };
 
 module.exports = app;

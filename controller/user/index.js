@@ -16,8 +16,8 @@ class User {
   // 获取用户openId
   getOpenId(req, res) {
     let { code } = req.query;
-    let appId = "wxa5e5a9a17ed70a29";
-    let secret = "a971ec96643d4cb0e0aa2f67be7bedfd";
+    let appId = "wx870e38a4f0ead16e";
+    let secret = "19a0a6c31338e1df0cfd16e50d34d735";
     let url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appId}&secret=${secret}&js_code=${code}&grant_type=authorization_code`;
     axios({ url }).then((response) => {
       res.send(response);
