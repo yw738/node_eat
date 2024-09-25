@@ -100,8 +100,8 @@ class User {
   // 获取当前用户的收藏
   getAllCollection(req, res) {
     let { userId } = req.query;
-    let sql = `SELECT d.*,e.address,e.avgPrice,e.name AS addName FROM (SELECT c.*,b.name,b.cityName,b.videoTime,b.videoImg FROM (SELECT * FROM my_collection a WHERE a.userId = '${userId}')
-    c INNER JOIN video_list b ON c.videoId = b.id) d INNER JOIN shop_list e ON d.shopId = e.id`;
+    let sql = `SELECT m.*,j.up_name FROM (SELECT d.*,e.address,e.avgPrice,e.name AS addName FROM (SELECT c.*,b.id,b.name,b.cityName,b.videoTime,b.videoTitle,b.up_id,b.videoImg FROM (SELECT a.videoId,a.shopId,a.num FROM my_collection a WHERE a.userId = '${userId}') c INNER JOIN video_list b ON c.videoId = b.videoId) d INNER JOIN shop_list e ON d.shopId = e.id
+    ) m INNER JOIN up_list j ON m.up_id = j.up_id`
     db.dbquery(sql).then((result) => {
       res.send({ code: 0, data: result, message: "ok" });
     });
