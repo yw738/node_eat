@@ -1,10 +1,10 @@
 const express = require("express");
-var fs = require("fs");
-var http = require("http");
-var https = require("https");
+// var fs = require("fs");
+// var http = require("http");
+// var https = require("https");
 const app = express();
 app.use(express.json()); //设置json解析
-const opn = require("opn");
+// const opn = require("opn");
 const MIME = {
   js: "application/javascript",
   json: "application/json",
@@ -34,6 +34,9 @@ app.all("*", function (req, res, next) {
   next();
 });
 
+/**
+ * 加载api
+*/
 const forwardRouter = require("./routes/forwardRouter");
 const user = require("./routes/user");
 const eatApp = require("./routes/eatApp");
@@ -42,6 +45,10 @@ app.use(forwardRouter);
 app.use(user);
 app.use(eatApp);
 app.use(chimieScript);
+
+/**
+ * 设置web 地址
+*/
 const path = require("path");
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/file"));
