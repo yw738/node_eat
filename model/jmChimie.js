@@ -1,5 +1,4 @@
 const CryptoJS = require("crypto-js"); //引入加密库
-window = this;
 // const JSEncrypt = require("jsencrypt");
 
 /**

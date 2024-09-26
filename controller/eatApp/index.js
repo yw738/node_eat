@@ -6,6 +6,8 @@ const publicJs = require("../../utils/index.js");
 const SnowflakeID = require("../../utils/snowflakeID.js");
 const request = require("request");
 const axios = require("./../../model/axios.js");
+const salting = require("./../../model/salting.js");
+
 
 // 雪花id
 const snid = new SnowflakeID({
@@ -101,6 +103,7 @@ class App {
     let upDto = await db.dbquery(sql3).then((result) => result[0]);
     videoDto.shopList = addressDto;
     videoDto.upDto = upDto;
+    // salting.encryptFn(videoDto)
     res.send({ code: 0, data: videoDto, message: "ok" });
   }
 
