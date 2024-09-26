@@ -5,8 +5,8 @@ const express = require("express");
 const api = require("../controller/user/index.js");
 const Route = express.Router();
 
-Route.route("/api/getOpenId").get(api.getOpenId);
-Route.route("/api/getUser/:id").get(api.getUser);
+Route.route("/sApi/getOpenId").get(api.getOpenId);
+Route.route("/api/getUser").get(api.getUser);
 Route.route("/api/addUser").post(api.addUser);
 Route.route("/api/updateUser").post(api.updateUser);
 

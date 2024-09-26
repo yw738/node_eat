@@ -1,10 +1,8 @@
 const express = require("express");
-// var fs = require("fs");
-// var http = require("http");
-// var https = require("https");
 const app = express();
 app.use(express.json()); //设置json解析
-// const opn = require("opn");
+const { expressjwt } = require("express-jwt");
+
 const MIME = {
   js: "application/javascript",
   json: "application/json",
@@ -35,20 +33,58 @@ app.all("*", function (req, res, next) {
 });
 
 /**
+ * 生成 token 的密钥
+ */
+const secretKey = "tubindaochuchixiaochengxu";
+// 注意：只要配置成功了 express-jwt 这个中间件，就可以把解析出来的用户信息，挂载到 `req.user` 属性上
+app.use(
+  expressjwt({
+    secret: secretKey,
+    algorithms: ["HS256"],
+    getToken: function fromHeaderOrQuerystring(req) {
+      if (req.headers.tk && req.headers.tk.split("-")[0] === "tb") {
+        return req.headers.tk.split("-")[1];
+      }
+      return null;
+    },
+  }).unless({
+    // 除去前綴為 /sApi 的請求都有 jwt 鑒權
+    path: [
+      /^\/sApi\//,
+      // "/sApi",
+    ],
+  })
+);
+/**
+ * 全局鉴权
+ */
+app.use((err, req, res, next) => {
+  // 这次错误是由 token 解析失败导致的
+  if (err.name === "UnauthorizedError") {
+    return res.send({
+      status: 401,
+      message: "无效的token",
+    });
+  }
+  res.send({
+    status: 500,
+    message: "未知的错误",
+  });
+});
+
+/**
  * 加载api
-*/
-const forwardRouter = require("./routes/forwardRouter");
+ */
 const user = require("./routes/user");
 const eatApp = require("./routes/eatApp");
 const chimieScript = require("./routes/chimieScript");
-app.use(forwardRouter);
 app.use(user);
 app.use(eatApp);
 app.use(chimieScript);
 
 /**
  * 设置web 地址
-*/
+ */
 const path = require("path");
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/file"));
@@ -59,9 +95,10 @@ app.use(express.static(__dirname + "/file"));
 const POST = 8081;
 global.globalData = {
   local: `http://localhost:${POST}`, //本项目的ip
+  secretKey,
 };
 
 app.listen(POST, function () {
   console.log("启动成功!");
-  console.log("http://localhost:" + POST);
+  console.log(global.globalData.local);
 });

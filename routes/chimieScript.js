@@ -5,10 +5,10 @@ const express = require("express");
 const addScript = require("../controller/chimie/addScript.js");
 const Route = express.Router();
 
-Route.route("/api/cmGetUpList").get(addScript.cmGetUpList);
-Route.route("/api/getAllVideoList").get(addScript.getAllVideoList);
-Route.route("/api/getAllshopList").get(addScript.getAllshopList);
-Route.route("/api/addUpShop").get(addScript.addUpShop);
-Route.route("/api/addAllUpShop").get(addScript.addAllUpShop);
+Route.route("/sApi/cmGetUpList").get(addScript.cmGetUpList);
+Route.route("/sApi/getAllVideoList").get(addScript.getAllVideoList);
+Route.route("/sApi/getAllshopList").get(addScript.getAllshopList);
+Route.route("/sApi/addUpShop").get(addScript.addUpShop);
+Route.route("/sApi/addAllUpShop").get(addScript.addAllUpShop);
 
 module.exports = Route;
