@@ -7,7 +7,7 @@ const SnowflakeID = require("../../utils/snowflakeID.js");
 const axios = require("../../model/axios.js");
 const jiemiChimie = require("../../model/jmChimie.js");
 
-let token = "CZ-6l5g2r23l248hveebpfn";
+let token = "CZ-fnruiq8dyhnxhfsuqno2";
 // token:
 // 雪花id
 const snid = new SnowflakeID({

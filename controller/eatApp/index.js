@@ -107,23 +107,22 @@ class App {
     res.send({ code: 0, data: videoDto, message: "ok" });
   }
 
-  // /**
-  //  * 指定 up 的视频
-  //  */
-  // async getDetail(req, res) {
-  //   // up id
-  //   let { id = "", pageSize = 20, pageIndex = 1 } = req.query;
-  //   if (!id) {
-  //     res.send({ code: 1, data: {}, message: "无id" });
-  //     return;
-  //   }
-  //   let pageStart = (pageIndex - 1) * pageSize; // 起始条
-  //   let sql = `SELECT * FROM video_list WHERE up_id = '${id}' order by videoTime desc limit ${pageStart},${pageSize};`;
-  //   let addressDto = await db.dbquery(sql).then((result) => result); // 视频 关联的地址
-  //   videoDto.shopList = addressDto;
-  //   videoDto.upDto = upDto;
-  //   res.send({ code: 0, data: videoDto, message: "ok" });
-  // }
+  /**
+   * app 初始化 查所有的字典
+   */
+  async appInit(req, res) {
+    let { id = "", pageSize = 20, pageIndex = 1 } = req.query;
+    if (!id) {
+      res.send({ code: 1, data: {}, message: "无id" });
+      return;
+    }
+    let pageStart = (pageIndex - 1) * pageSize; // 起始条
+    let sql = `SELECT * FROM video_list WHERE up_id = '${id}' order by videoTime desc limit ${pageStart},${pageSize};`;
+    let addressDto = await db.dbquery(sql).then((result) => result); // 视频 关联的地址
+    videoDto.shopList = addressDto;
+    videoDto.upDto = upDto;
+    res.send({ code: 0, data: videoDto, message: "ok" });
+  }
 }
 
 module.exports = new App();

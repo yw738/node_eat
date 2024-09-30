@@ -37,40 +37,37 @@ app.all("*", function (req, res, next) {
  */
 const secretKey = "tubindaochuchixiaochengxu";
 // 注意：只要配置成功了 express-jwt 这个中间件，就可以把解析出来的用户信息，挂载到 `req.user` 属性上
-app.use(
-  expressjwt({
-    secret: secretKey,
-    algorithms: ["HS256"],
-    getToken: function fromHeaderOrQuerystring(req) {
-      if (req.headers.tk && req.headers.tk.split("-")[0] === "tb") {
-        return req.headers.tk.split("-")[1];
-      }
-      return null;
-    },
-  }).unless({
-    // 除去前綴為 /sApi 的請求都有 jwt 鑒權
-    path: [
-      /^\/sApi\//,
-      // "/sApi",
-    ],
-  })
-);
+// app.use(
+//   expressjwt({
+//     secret: secretKey,
+//     algorithms: ["HS256"],
+//     getToken: function fromHeaderOrQuerystring(req) {
+//       if (req.headers.tk && req.headers.tk.split("-")[0] === "tb") {
+//         return req.headers.tk.split("-")[1];
+//       }
+//       return null;
+//     },
+//   }).unless({
+//     // 除去前綴為 /sApi 的請求都有 jwt 鑒權
+//     path: [/^\/sApi\//, /^\/api\//],
+//   })
+// );
 /**
  * 全局鉴权
  */
-app.use((err, req, res, next) => {
-  // 这次错误是由 token 解析失败导致的
-  if (err.name === "UnauthorizedError") {
-    return res.send({
-      status: 401,
-      message: "无效的token",
-    });
-  }
-  res.send({
-    status: 500,
-    message: "未知的错误",
-  });
-});
+// app.use((err, req, res, next) => {
+//   // 这次错误是由 token 解析失败导致的
+//   if (err.name === "UnauthorizedError") {
+//     return res.send({
+//       status: 401,
+//       message: "无效的token",
+//     });
+//   }
+//   res.send({
+//     status: 500,
+//     message: "未知的错误",
+//   });
+// });
 
 /**
  * 加载api
