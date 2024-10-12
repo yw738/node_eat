@@ -7,6 +7,7 @@ const SnowflakeID = require("../../utils/snowflakeID.js");
 const request = require("request");
 const axios = require("./../../model/axios.js");
 const salting = require("./../../model/salting.js");
+const cityData = require("./../../assets/js/pc.js");
 
 // 雪花id
 const snid = new SnowflakeID({
@@ -111,15 +112,16 @@ class App {
    */
   async appInit(req, res) {
     let {} = req.query;
-    let foodList = await db.querySql("food_type");
-    let pageStart = (pageIndex - 1) * pageSize; // 起始条
-    let sql = `SELECT * FROM video_list WHERE up_id = '${id}' order by videoTime desc limit ${pageStart},${pageSize};`;
-    let addressDto = await db.dbquery(sql).then((result) => result); // 视频 关联的地址
-    videoDto.shopList = addressDto;
-    videoDto.upDto = upDto;
-    res.send({ code: 0, data: videoDto, message: "ok" });
+    let foodType = await db.dbquery(`select * from food_type`);
+    res.send({
+      code: 0,
+      data: {
+        foodType: foodType, // 分类
+        cityList: cityData.data, // 城市分类
+      },
+      message: "ok",
+    });
   }
-
 }
 
 module.exports = new App();
