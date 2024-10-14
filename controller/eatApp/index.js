@@ -117,7 +117,7 @@ class App {
       code: 0,
       data: {
         foodType: foodType, // 分类
-        cityList: cityData.data, // 城市分类
+        cityList: cityData.data[0], // 城市分类
       },
       message: "ok",
     });
