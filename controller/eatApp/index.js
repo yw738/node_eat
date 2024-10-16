@@ -50,9 +50,14 @@ class App {
         }
       }
     }
-    if (str) str = `where ${str}`;
+    if (str) {
+      str = `where ${str} and`;
+    } else {
+      str = `where`;
+    }
 
-    let sql0 = `select * from video_list ${str} order by videoTime desc limit ${pageStart},${pageSize}`;
+    `SELECT * FROM video_list WHERE name LIKE '%%'`;
+    let sql0 = `select * from video_list ${str} name like '%${keyword}%'`;
     let sql = `SELECT
                   e.*,
                   f.avgPrice,
@@ -78,7 +83,7 @@ class App {
                     ) c
                     INNER JOIN shop_contact d ON c.id = d.videoId 
                   ) e
-                  INNER JOIN shop_list f ON e.addressId = f.id group by e.id`;
+                  INNER JOIN shop_list f ON e.addressId = f.id and f.dpCategory LIKE '%${foodType}%' group by e.id order by videoTime desc limit ${pageStart},${pageSize}`;
 
     db.dbquery(sql).then((result) => {
       res.send({ code: 0, data: result, message: "ok" });

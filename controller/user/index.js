@@ -123,6 +123,7 @@ class User {
   getAllCollection(req, res) {
     // let { userId } = req.query;
     let { id: userId } = req.auth;
+    if (!userId) return;
     let sql = `SELECT m.*,j.up_name FROM (SELECT d.*,e.address,e.avgPrice,e.name AS addName FROM (SELECT c.*,b.id,b.name,b.cityName,b.videoTime,b.videoTitle,b.up_id,b.videoImg FROM (SELECT a.videoId,a.shopId,a.num FROM my_collection a WHERE a.userId = '${userId}') c INNER JOIN video_list b ON c.videoId = b.videoId) d INNER JOIN shop_list e ON d.shopId = e.id
     ) m INNER JOIN up_list j ON m.up_id = j.up_id`;
     db.dbquery(sql).then((result) => {
@@ -133,7 +134,8 @@ class User {
   // 判断 店铺是否被用户收藏
   shopIsCollection(req, res) {
     let { videoId } = req.query;
-    let { id: userId } = req.auth;
+    let { id: userId } = req.auth || {};
+    if (!userId) return;
     let sql = `select id,shopId from my_collection where userId = '${userId}' and videoId = '${videoId}'`;
     db.dbquery(sql).then((result) => {
       let json = {};
