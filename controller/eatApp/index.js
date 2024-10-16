@@ -36,7 +36,8 @@ class App {
       keyword = "",
       foodType = "",
     } = req.query;
-    let json = { up_id: upId, cityName: city }; //...req.query
+    // up_id: upId,
+    let json = { cityName: city }; //...req.query
     delete json.pageSize;
     delete json.pageIndex;
     let pageStart = (pageIndex - 1) * pageSize; // 起始条
@@ -50,13 +51,22 @@ class App {
         }
       }
     }
-    if (str) {
-      str = `where ${str} and`;
-    } else {
-      str = `where`;
-    }
 
-    `SELECT * FROM video_list WHERE name LIKE '%%'`;
+    if (str) {
+      str = `where ${str} and `;
+    } else {
+      str = `where `;
+    }
+    if (upId) {
+      // 多个up up_id IN ('2', '4', '52')
+      if (upId && upId.split(",").length > 1) {
+        str = `${str} up_id IN (${upId}) and `;
+      } else {
+        // 单个up
+        str = `${str} up_id='${upId}' and `;
+      }
+    }
+    // sql
     let sql0 = `select * from video_list ${str} name like '%${keyword}%'`;
     let sql = `SELECT
                   e.*,
@@ -85,9 +95,13 @@ class App {
                   ) e
                   INNER JOIN shop_list f ON e.addressId = f.id and f.dpCategory LIKE '%${foodType}%' group by e.id order by videoTime desc limit ${pageStart},${pageSize}`;
 
-    db.dbquery(sql).then((result) => {
-      res.send({ code: 0, data: result, message: "ok" });
-    });
+    try {
+      db.dbquery(sql).then((result) => {
+        res.send({ code: 0, data: result, message: "ok" });
+      });
+    } catch (err) {
+      res.send({ code: 1, data: [], message: "系统异常" });
+    }
   }
 
   /**
