@@ -128,3 +128,4 @@ exports.querySql = querySql;
 exports.selectAll = selectAll;
 exports.add = add;
 exports.dbquery = dbquery;
+exports.escapeFn = connection.escape

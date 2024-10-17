@@ -8,7 +8,10 @@ const request = require("request");
 const axios = require("./../../model/axios.js");
 const salting = require("./../../model/salting.js");
 const cityData = require("./../../assets/js/pc.js");
-
+// 方法一：使用正则表达式替换空格字符
+function filterSpaces(str) {
+  return str.replace(/\s/g, "");
+}
 // 雪花id
 const snid = new SnowflakeID({
   mid: +new Date(),
@@ -36,18 +39,33 @@ class App {
       keyword = "",
       foodType = "",
     } = req.query;
-    // up_id: upId,
+    // 验证参数
+    pageIndex = parseInt(pageIndex) || 1;
+    pageSize = parseInt(pageSize) || 20;
+    if (upId) {
+      let a = upId.split(",");
+      a = a
+        .filter((v) => v && Boolean(parseInt(v)))
+        .map((v) => filterSpaces(v));
+      upId = a.join(",");
+    }
+    // upId = upId && db.escapeFn(upId);
+    city = city && db.escapeFn(filterSpaces(city));
+    foodType = foodType && filterSpaces(foodType);
+    keyword = keyword && filterSpaces(keyword);
     let json = { cityName: city }; //...req.query
     delete json.pageSize;
     delete json.pageIndex;
     let pageStart = (pageIndex - 1) * pageSize; // 起始条
+
+    // 拼接阶段
     let str = "";
     for (let [label, value] of Object.entries(json)) {
       if (value) {
         if (str) {
-          str = `${str} and ${label}="${value}"`;
+          str = `${str} and ${label}=${value}`;
         } else {
-          str = `${label}="${value}"`;
+          str = `${label}=${value}`;
         }
       }
     }
@@ -63,11 +81,11 @@ class App {
         str = `${str} up_id IN (${upId}) and `;
       } else {
         // 单个up
-        str = `${str} up_id='${upId}' and `;
+        str = `${str} up_id=${upId} and `;
       }
     }
     // sql
-    let sql0 = `select * from video_list ${str} name like '%${keyword}%'`;
+    let sql0 = `select * from video_list ${str} name like "%${keyword}%"`;
     let sql = `SELECT
                   e.*,
                   f.avgPrice,
@@ -114,6 +132,7 @@ class App {
       res.send({ code: 1, data: {}, message: "无id" });
       return;
     }
+    id = id && filterSpaces(id);
     let sql = `select * from (select * from shop_contact a WHERE a.videoId='${id}') a inner join shop_list b on a.addressId = b.id ;`;
     let sql2 = `select * from video_list where id='${id}'`; // 查视频
     let addressDto = await db.dbquery(sql).then((result) => result); // 视频 关联的地址

@@ -49,6 +49,7 @@ class User {
       res.send({ code: 1, message: "没有id" });
       return;
     }
+    id = id && filterSpaces(id);
     db.querySql("user", {
       user_id: id,
     }).then((result) => {
@@ -65,6 +66,8 @@ class User {
       res.send({ code: 1, message: "没有id" });
       return;
     }
+    userName = userName && filterSpaces(userName);
+    userId = userId && filterSpaces(userId);
     let json = {
       user_id: userId,
       user_name: userName,
@@ -84,7 +87,7 @@ class User {
       res.send({ code: 1, message: "没有id" });
       return;
     }
-
+    userId = userId && filterSpaces(userId);
     let json = {
       last_visit: publicJs.getTime(true),
     };
@@ -98,6 +101,10 @@ class User {
     let { videoId, num, shopId } = req.query;
     let { id: userId } = req.auth;
     let id = snid.generate();
+    videoId = videoId && filterSpaces(videoId);
+    num = num && filterSpaces(num);
+    shopId = shopId && filterSpaces(shopId);
+    userId = userId && filterSpaces(userId);
     db.add("my_collection", {
       videoId: videoId,
       userId: userId,
